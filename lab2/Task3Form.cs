@@ -277,14 +277,147 @@ namespace lab2
             saturation_trackbar.Value = 0;
             value_trackbar.Value = 0;
 
+            UpdateHSVLabels();
+
+            if (original_img != null)
+            {
+                converted_img = new Bitmap(original_img);
+                converted_picturebox.Image = converted_img;
+            }
+
         }
 
         private void TrackBar_Scroll(object sender, EventArgs e)
         {
+            UpdateHSVLabels();
 
+            if (original_img != null)
+            {
+                ChangeHSVParams();
+            }
         }
 
-        
+
+
+
+
+
+        private void UpdateHSVLabels()
+        {
+            hue_label.Text = $"Оттенок (Hue): {hue_trackbar.Value}";
+            saturation_label.Text = $"Насыщенность (Saturation): {saturation_trackbar.Value}%";
+            value_label.Text = $"Яркость (Value): {value_trackbar.Value}%";
+        }
+
+        private void ChangeHSVParams()
+        {
+            if (original_img == null) return;
+
+            converted_img = HSVTransform(
+                original_img,
+                hue_trackbar.Value,
+                saturation_trackbar.Value,
+                value_trackbar.Value
+            );
+
+            converted_picturebox.Image = converted_img;
+        }
+
+        private Bitmap HSVTransform(Bitmap source, float hue_change, float saturation_change, float value_change)
+        {
+            float s_ratio = (100 + saturation_change) / 100.0f;
+            float v_ratio = (100 + value_change) / 100.0f;
+
+            Bitmap result = new Bitmap(source.Width, source.Height);
+            
+
+
+            for (int y = 0; y < source.Height; y++)
+            {
+                for (int x = 0; x < source.Width; x++)
+                {
+                    Color pixel = source.GetPixel(x, y);
+                    (double hue, double saturation, double value) = RGBtoHSV(pixel);
+
+                    hue = (hue + hue_change) % 360;
+                    saturation = Math.Max(0, Math.Min(1, saturation * s_ratio));
+                    value = Math.Max(0, Math.Min(1, value * v_ratio));
+
+
+                    Color new_pixel = HSVtoRGB(hue, saturation, value);
+                    result.SetPixel(x, y, new_pixel);
+                }
+            }
+
+            return result;
+        }
+
+        private (double hue, double saturation, double value) RGBtoHSV(Color color)
+        {
+            double r = color.R / 255.0;
+            double g = color.G /255.0;
+            double  b = color.B /255.0;
+
+            double max = Math.Max(g, Math.Max(b,r));
+            double min = Math.Min(g, Math.Min(b,r));
+            double diff = max - min;
+
+            double hue = 0.0;
+            double saturation = (max == 0) ? 0 : 1 - (min / max);
+            double value = max;
+
+
+            if (diff != 0)
+            {
+                if (max == r)
+                {
+                    hue = 60 * ((g - b) / diff);
+                    if (g < b) hue += 360;
+                }
+                else if (max == g)
+                {
+                    hue = 60 * ((b - r) / diff) + 120;
+                }
+                else
+                {
+                    hue = 60 * ((r - g) / diff) + 240;
+                }
+
+            }
+            return (hue, saturation, value);
+        }
+
+
+        private Color HSVtoRGB(double hue, double saturation, double value)
+        {
+            int Hi =((int) (Math.Floor(hue / 60))) % 6;
+            double f = (hue / 60)  - (double)(Math.Floor(hue / 60));
+
+            int v = (int) (value * 255);
+            int p = (int) (value * (1 - saturation) * 255);
+            int q = (int) (value * (1 - f * saturation) * 255);
+            int t = (int) (value * (1 - (1 - f) * saturation) * 255);
+
+
+            switch (Hi)
+            {
+                case 0:
+                    return Color.FromArgb(v,t,p);
+                case 1:
+                    return Color.FromArgb(q,v,p);
+                case 2:
+                    return Color.FromArgb(p,v,t);
+                case 3:
+                    return Color.FromArgb(p,q,v);
+                case 4:
+                    return Color.FromArgb(t,p,v);
+                default:
+                    return Color.FromArgb(v,p,q);
+            }
+        }
+
+
+
 
     }
 }
