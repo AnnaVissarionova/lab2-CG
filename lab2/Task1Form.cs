@@ -53,33 +53,12 @@ namespace lab2
             this.Controls.Add(pb4);
 
 
-            //Chart chart1 = CreateHistogram(gray1, "NTSC/PAL Grayscale", 160, 280);
-            //Chart chart2 = CreateHistogram(gray2, "HDTV Grayscale", 790, 280);
+            Chart chart1 = CreateHistogram(gray1, "NTSC/PAL Grayscale", 160, 280);
+            Chart chart2 = CreateHistogram(gray2, "HDTV Grayscale", 790, 280);
 
-            //this.Controls.Add(chart1);
-            //this.Controls.Add(chart2);
+            this.Controls.Add(chart1);
+            this.Controls.Add(chart2);
 
-            PictureBox pbHist1 = new PictureBox()
-            {
-                Image = CreateHistogramBitmap(gray1),
-                Width = 256,
-                Height = 200,
-                Left = 400,
-                Top = 300,
-                SizeMode = PictureBoxSizeMode.StretchImage
-            };
-            this.Controls.Add(pbHist1);
-
-            PictureBox pbHist2 = new PictureBox()
-            {
-                Image = CreateHistogramBitmap(gray2),
-                Width = 256,
-                Height = 200,
-                Left = 700,
-                Top = 300,
-                SizeMode = PictureBoxSizeMode.StretchImage
-            };
-            this.Controls.Add(pbHist2);
         }
 
         private Bitmap ConvertToGray(Bitmap img, double kr, double kg, double kb)
