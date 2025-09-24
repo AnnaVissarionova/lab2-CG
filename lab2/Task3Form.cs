@@ -89,7 +89,7 @@ namespace lab2
                 Value = 0,
                 Size = new Size(200, 50),
                 Location = new Point(20, 160),
-                TickFrequency = 20
+                TickFrequency = 10
             };
             hue_trackbar.Scroll += TrackBar_Scroll;
 
@@ -109,7 +109,7 @@ namespace lab2
                 Value = 0,
                 Size = new Size(200, 50),
                 Location = new Point(20, 240),
-                TickFrequency = 10
+                TickFrequency = 5
             };
             saturation_trackbar.Scroll += TrackBar_Scroll;
 
@@ -129,7 +129,7 @@ namespace lab2
                 Value = 0,
                 Size = new Size(200, 50),
                 Location = new Point(20, 320),
-                TickFrequency = 10
+                TickFrequency = 5
             };
             value_trackbar.Scroll += TrackBar_Scroll;
 
@@ -339,7 +339,7 @@ namespace lab2
                     Color pixel = source.GetPixel(x, y);
                     (double hue, double saturation, double value) = RGBtoHSV(pixel);
 
-                    hue = (hue + hue_change) % 360;
+                    hue = (hue + hue_change + 360) % 360;
                     saturation = Math.Max(0, Math.Min(1, saturation * s_ratio));
                     value = Math.Max(0, Math.Min(1, value * v_ratio));
 
